@@ -1,0 +1,51 @@
+class ConfirmDom extends React.Component{
+  constructor(props){
+		super(props)
+		this.state = {
+			msg: ''
+		}
+	}
+	render() {
+		return (
+			<div className='confirm'>
+				<div className='confirm__content'>
+					{this.state.msg}
+				</div>
+        <button onClick={confirmHide}>确认</button>
+			</div>
+		);
+  }
+  componentDidMount() {
+		this.setState({
+			msg: this.props.msg || '提示！'
+    })
+    console.log('componentDidMount')
+    this.props.statusTrue();
+  }
+  componentWillUnmount(){
+    console.log('componentWillUnmount')
+    this.props.statusFalse();
+  }
+}
+let node = null
+const confirm = (v) => {
+  return new Promise((resolve,reject)=>{
+    if(node) {
+      confirmHide();
+    }
+    console.log(v);
+
+		node = document.createElement('div')
+		document.body.appendChild(node)
+    ReactDOM.render(<ConfirmDom msg={v} statusTrue={()=>{resolve(true)}} statusFalse={()=>{reject(false)}}/>, node)
+  })
+}
+const confirmHide = ()=> {
+  console.log(123);
+  if(node) {
+    ReactDOM.unmountComponentAtNode(node)
+    document.body.removeChild(node)
+    node = null
+  }
+}
+window.confirm = confirm;
